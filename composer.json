@@ -1,0 +1,69 @@
+{
+  "name": "opus4-repo/opus4-i18n",
+  "description": "OPUS 4 I18n library",
+  "license": "GPL-2.0+",
+  "type": "library",
+  "keywords": [
+    "opus4"
+  ],
+  "homepage": "http://www.opus-repository.org",
+  "require": {
+    "php": ">=8.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "10.*",
+    "opus4-repo/codesniffer": "dev-laminas",
+    "squizlabs/php_codesniffer": "*",
+    "phpmd/phpmd": "@stable",
+    "phploc/phploc": "@stable",
+    "sebastian/phpcpd": "*",
+    "phpmetrics/phpmetrics": "*"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Opus\\I18n\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "OpusTest\\I18n\\": "test/"
+    }
+  },
+  "scripts": {
+    "check": [
+      "Composer\\Config::disableProcessTimeout",
+      "@test",
+      "@cs-check"
+    ],
+    "check-full": [
+      "Composer\\Config::disableProcessTimeout",
+      "@cs-report",
+      "@phpmd",
+      "@phpcpd",
+      "@test-coverage"
+    ],
+    "analyse": [
+      "Composer\\Config::disableProcessTimeout",
+      "@cs-report",
+      "@phpmd"
+    ],
+    "test": [
+      "phpunit --colors=always --log-junit build/phpunit.xml"
+    ],
+    "test-coverage": "phpunit --log-junit build/phpunit.xml --colors=always --coverage-html build/ --coverage-clover build/clover.xml",
+    "cs-check": "phpcs -n",
+    "cs-report": "phpcs -n --report=checkstyle --report-file=build/checkstyle.xml",
+    "cs-fix": "phpcbf",
+    "phpmd": "phpmd src xml cleancode,unusedcode,design,naming --reportfile build/phpmd.xml --ignore-violations-on-exit",
+    "phpcpd": "phpcpd . --min-lines 3 --min-tokens 30 --log-pmd build/pmd-cpd.xml --progress || true",
+    "phploc": "phploc --log-xml build/phploc.xml src",
+    "metrics": "phpmetrics --report-html=build/metrics --junit=build/phpunit.xml ."
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
+}
