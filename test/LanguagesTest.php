@@ -141,4 +141,13 @@ class LanguagesTest extends TestCase
         $this->assertEquals('fre', Languages::getPart2b('zzz', 'fre'));
         $this->assertEquals('fre', Languages::getPart2b(null, 'fre'));
     }
+
+    public function testGetLanguageCaseInsensitive()
+    {
+        $expected = new Language(['ger', 'deu', 'de', 'German']);
+
+        $this->assertEquals($expected, Languages::getLanguage('GER'));
+        $this->assertEquals($expected, Languages::getLanguage('DEU'));
+        $this->assertEquals($expected, Languages::getLanguage('De'));
+    }
 }

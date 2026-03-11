@@ -34,6 +34,7 @@ namespace Opus\I18n;
 use function array_column;
 use function array_search;
 use function strlen;
+use function strtolower;
 
 /**
  * ISO-639 language codes.
@@ -551,19 +552,19 @@ class Languages
 
     public static function getLanguageByPart2b(string $code): ?Language
     {
-        $language = self::$languages[$code] ?? null;
+        $language = self::$languages[strtolower($code)] ?? null;
         return $language !== null ? new Language($language) : null;
     }
 
     public static function getLanguageByPart1(string $code): ?Language
     {
-        $index = array_search($code, array_column(self::$languages, 2, 0));
+        $index = array_search(strtolower($code), array_column(self::$languages, 2, 0));
         return $index !== false ? new Language(self::$languages[$index]) : null;
     }
 
     public static function getLanguageByPart2t(string $code): ?Language
     {
-        $index = array_search($code, array_column(self::$languages, 1, 0));
+        $index = array_search(strtolower($code), array_column(self::$languages, 1, 0));
         return $index !== false ? new Language(self::$languages[$index]) : null;
     }
 
