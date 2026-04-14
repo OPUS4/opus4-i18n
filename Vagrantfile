@@ -2,10 +2,10 @@
 # vi: set ft=ruby :
 
 $software = <<SCRIPT
-# Downgrade to PHP 8.1
+# Downgrade to PHP 8.2
 apt-add-repository -y ppa:ondrej/php
 apt-get -yq update
-apt-get -yq install php8.1
+apt-get -yq install php8.2
 
 # Install required PHP packages
 apt-get -yq install php8.1-curl
