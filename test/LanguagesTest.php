@@ -31,6 +31,7 @@
 
 namespace OpusTest\I18n;
 
+use Opus\I18n\I18nException;
 use Opus\I18n\Language;
 use Opus\I18n\Languages;
 use PHPUnit\Framework\TestCase;
@@ -163,5 +164,98 @@ class LanguagesTest extends TestCase
             $language = Languages::getLanguage($langId);
             $this->assertNotEquals($langId, $language->getDisplayName());
         }
+    }
+
+    public function testAddLanguage()
+    {
+        $languages = new Languages();
+        $languages->addLanguage('cmn', 'zho', 'zh', 'Chinesisch/Mandarin');
+        $languages->addLanguage('wuu', 'zho', 'zh', 'Chinesisch/Wu');
+
+        $language = Languages::getLanguage('cmn');
+
+        $this->assertNotNull($language);
+        $this->assertEquals('cmn', $language->getPart2b());
+        $this->assertEquals('zho', $language->getPart2t());
+        $this->assertEquals('zh', $language->getPart1());
+        $this->assertEquals('Chinesisch/Mandarin', $language->getRefName());
+
+        $language = Languages::getLanguage('wuu');
+        $this->assertNotNull($language);
+        $this->assertEquals('wuu', $language->getPart2b());
+        $this->assertEquals('zho', $language->getPart2t());
+        $this->assertEquals('zh', $language->getPart1());
+        $this->assertEquals('Chinesisch/Wu', $language->getRefName());
+    }
+
+    public function testAddLanguageExistingPart2b()
+    {
+        $languages = new Languages();
+        $languages->addLanguage('ger', 'deu', 'de', 'German');
+
+        $german = Languages::getLanguage('ger');
+
+        $this->assertNotNull($languages);
+        $this->assertEquals('ger', $german->getPart2b());
+        $this->assertEquals('deu', $german->getPart2t());
+        $this->assertEquals('de', $german->getPart1());
+        $this->assertEquals('German', $german->getRefName());
+    }
+
+    public function testAddLanguageWithoutPart1()
+    {
+        $languages = new Languages();
+        $languages->addLanguage('zxx', 'zxx', null, 'Not specified');
+
+        $lang = Languages::getLanguage('zxx');
+
+        $this->assertNotNull($languages);
+        $this->assertEquals('zxx', $lang->getPart2b());
+        $this->assertEquals('zxx', $lang->getPart2t());
+        $this->assertEquals('', $lang->getPart1());
+        $this->assertEquals('Not specified', $lang->getRefName());
+    }
+
+    public function testAddLanguages()
+    {
+        $extra = [
+            'cmn' => 'zho, zh, Chinesisch/Mandarin',
+            'wuu' => 'zho, zh, Chinesisch/Wu',
+        ];
+
+        $languages = new Languages();
+        $languages->addLanguages($extra);
+
+        $cmn = Languages::getLanguage('cmn');
+        $this->assertNotNull($cmn);
+
+        $wuu = Languages::getLanguage('wuu');
+        $this->assertNotNull($wuu);
+    }
+
+    public function testAddLanguagesWithoutPart1()
+    {
+        $extra = [
+            'zxx' => 'zxx, , Not specified',
+        ];
+
+        $languages = new Languages();
+        $languages->addLanguages($extra);
+
+        $zxx = Languages::getLanguage('zxx');
+        $this->assertNotNull($zxx);
+        $this->assertEquals('', $zxx->getPart1());
+    }
+
+    public function testAddLanguagesInvalidConfig()
+    {
+        $extra = [
+            'zxx' => '',
+        ];
+
+        $languages = new Languages();
+
+        $this->expectException(I18nException::class);
+        $languages->addLanguages($extra);
     }
 }
