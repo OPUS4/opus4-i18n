@@ -80,6 +80,12 @@ class Language
 
     public function getDisplayName(?string $locale = null): string
     {
-        return Locale::getDisplayName($this->part1b, $locale);
+        $name = Locale::getDisplayName($this->part1b, $locale);
+
+        if ($name === $this->part1b) {
+            $name = $this->refName;
+        }
+
+        return $name;
     }
 }

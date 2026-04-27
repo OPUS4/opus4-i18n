@@ -35,6 +35,8 @@ use Opus\I18n\Language;
 use Opus\I18n\Languages;
 use PHPUnit\Framework\TestCase;
 
+use function array_keys;
+
 class LanguagesTest extends TestCase
 {
     public function testGetLanguages()
@@ -149,5 +151,17 @@ class LanguagesTest extends TestCase
         $this->assertEquals($expected, Languages::getLanguage('GER'));
         $this->assertEquals($expected, Languages::getLanguage('DEU'));
         $this->assertEquals($expected, Languages::getLanguage('De'));
+    }
+
+    public function testGetDisplayName()
+    {
+        $languages = new Languages();
+
+        $all = array_keys($languages->getAllAsArray());
+
+        foreach ($all as $langId) {
+            $language = Languages::getLanguage($langId);
+            $this->assertNotEquals($langId, $language->getDisplayName());
+        }
     }
 }
