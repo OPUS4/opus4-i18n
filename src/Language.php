@@ -39,7 +39,7 @@ use Locale;
 class Language
 {
     /** @var string */
-    private $part1b;
+    private $part2b;
 
     /** @var string */
     private $part2t;
@@ -52,7 +52,7 @@ class Language
 
     public function __construct(array $language)
     {
-        $this->part1b  = $language[0];
+        $this->part2b  = $language[0];
         $this->part2t  = $language[1];
         $this->part1   = $language[2];
         $this->refName = $language[3];
@@ -60,7 +60,7 @@ class Language
 
     public function getPart2b(): string
     {
-        return $this->part1b;
+        return $this->part2b;
     }
 
     public function getPart2t(): string
@@ -80,9 +80,9 @@ class Language
 
     public function getDisplayName(?string $locale = null): string
     {
-        $name = Locale::getDisplayName($this->part1b, $locale);
+        $name = Locale::getDisplayName($this->part2b, $locale);
 
-        if ($name === $this->part1b) {
+        if ($name === $this->part2b) {
             $name = $this->refName;
         }
 
