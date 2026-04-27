@@ -32,7 +32,11 @@
 namespace Opus\I18n;
 
 use function array_column;
+use function array_map;
+use function array_merge;
 use function array_search;
+use function count;
+use function explode;
 use function strlen;
 use function strtolower;
 
@@ -42,7 +46,7 @@ use function strtolower;
 class Languages
 {
     /** @var array ISO-639 language codes (part2_b, part2_t, part1, ref_name) */
-    private static $languages = [
+    private static array $languages = [
         'aar' => ['aar', 'aar', 'aa', 'Danakil-Sprache'],
         'abk' => ['abk', 'abk', 'ab', 'Abchasisch'],
         'ace' => ['ace', 'ace', '', 'Aceh-Sprache'],
@@ -530,9 +534,33 @@ class Languages
         'zza' => ['zza', 'zza', '', 'Zazaki'],
     ];
 
+    private static array $addedLanguages = [];
+
     public function getAllAsArray(): array
     {
         return self::$languages;
+    }
+
+    public function addLanguage(string $part2b, string $part2t, ?string $part1, string $refName): self
+    {
+        self::$addedLanguages[$part2b] = [$part2b, $part2t, $part1 ?? '', $refName];
+
+        return $this;
+    }
+
+    public function addLanguages(array $languages): self
+    {
+        foreach ($languages as $part2b => $language) {
+            $values = array_map('trim', explode(',', $language));
+            if (count($values) !== 3) {
+                throw new I18nException(
+                    "Language '{$part2b}' invalid config (required are \'part2t, part1, refName\')"
+                );
+            }
+            [$part2t, $part1, $refName] = $values;
+            $this->addLanguage($part2b, $part2t, $part1, $refName);
+        }
+        return $this;
     }
 
     public static function getLanguage(string $code): ?Language
@@ -552,20 +580,23 @@ class Languages
 
     public static function getLanguageByPart2b(string $code): ?Language
     {
-        $language = self::$languages[strtolower($code)] ?? null;
+        $languages = self::getLanguageList();
+        $language  = $languages[strtolower($code)] ?? null;
         return $language !== null ? new Language($language) : null;
     }
 
     public static function getLanguageByPart1(string $code): ?Language
     {
-        $index = array_search(strtolower($code), array_column(self::$languages, 2, 0));
-        return $index !== false ? new Language(self::$languages[$index]) : null;
+        $languages = self::getLanguageList();
+        $index     = array_search(strtolower($code), array_column($languages, 2, 0));
+        return $index !== false ? new Language($languages[$index]) : null;
     }
 
     public static function getLanguageByPart2t(string $code): ?Language
     {
-        $index = array_search(strtolower($code), array_column(self::$languages, 1, 0));
-        return $index !== false ? new Language(self::$languages[$index]) : null;
+        $languages = self::getLanguageList();
+        $index     = array_search(strtolower($code), array_column($languages, 1, 0));
+        return $index !== false ? new Language($languages[$index]) : null;
     }
 
     public static function getPart1(?string $code, ?string $default = null): ?string
@@ -593,5 +624,10 @@ class Languages
         }
         $language = self::getLanguage($code);
         return $language !== null ? $language->getPart2t() : $default;
+    }
+
+    protected static function getLanguageList(): array
+    {
+        return array_merge(self::$languages, self::$addedLanguages);
     }
 }
