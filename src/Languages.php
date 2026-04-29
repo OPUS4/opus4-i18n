@@ -45,7 +45,7 @@ use function strtolower;
  */
 class Languages
 {
-    /** @var array ISO-639 language codes (part2_b, part2_t, part1, ref_name) */
+    /** @var array ISO-639 language code => [part2_b, part2_t, part1, ref_name] */
     private static array $languages = [
         'aar' => ['aar', 'aar', 'aa', 'Danakil-Sprache'],
         'abk' => ['abk', 'abk', 'ab', 'Abchasisch'],
