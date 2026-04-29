@@ -49,7 +49,7 @@ class LanguagesTest extends TestCase
 
     public function testGetLanguage()
     {
-        $expected = new Language(['ger', 'deu', 'de', 'German']);
+        $expected = new Language('deu', ['ger', 'deu', 'de', 'German']);
 
         // Using part2_b
         $this->assertEquals($expected, Languages::getLanguage('ger'));
@@ -67,21 +67,21 @@ class LanguagesTest extends TestCase
     public function testGetLanguageByPart2b()
     {
         $language = Languages::getLanguageByPart2b('ger');
-        $this->assertEquals(new Language(['ger', 'deu', 'de', 'German']), $language);
+        $this->assertEquals(new Language('deu', ['ger', 'deu', 'de', 'German']), $language);
         $this->assertNull(Languages::getLanguageByPart2b('zzz'));
     }
 
     public function testGetLanguageByPart2t()
     {
         $language = Languages::getLanguageByPart2t('fra');
-        $this->assertEquals(new Language(['fre', 'fra', 'fr', 'French']), $language);
+        $this->assertEquals(new Language('fra', ['fre', 'fra', 'fr', 'French']), $language);
         $this->assertNull(Languages::getLanguageByPart2t('zzz'));
     }
 
     public function testGetLanguageByPart1()
     {
         $language = Languages::getLanguageByPart1('en');
-        $this->assertEquals(new Language(['eng', 'eng', 'en', 'English']), $language);
+        $this->assertEquals(new Language('eng', ['eng', 'eng', 'en', 'English']), $language);
         $this->assertNull(Languages::getLanguageByPart1('zzz'));
     }
 
@@ -147,7 +147,7 @@ class LanguagesTest extends TestCase
 
     public function testGetLanguageCaseInsensitive()
     {
-        $expected = new Language(['ger', 'deu', 'de', 'German']);
+        $expected = new Language('deu', ['ger', 'deu', 'de', 'German']);
 
         $this->assertEquals($expected, Languages::getLanguage('GER'));
         $this->assertEquals($expected, Languages::getLanguage('DEU'));
@@ -169,20 +169,22 @@ class LanguagesTest extends TestCase
     public function testAddLanguage()
     {
         $languages = new Languages();
-        $languages->addLanguage('cmn', 'zho', 'zh', 'Chinesisch/Mandarin');
-        $languages->addLanguage('wuu', 'zho', 'zh', 'Chinesisch/Wu');
+        $languages->addLanguage('cmn', null, 'zho', 'zh', 'Chinesisch/Mandarin');
+        $languages->addLanguage('wuu', null, 'zho', 'zh', 'Chinesisch/Wu');
 
         $language = Languages::getLanguage('cmn');
 
         $this->assertNotNull($language);
-        $this->assertEquals('cmn', $language->getPart2b());
+        $this->assertEquals('cmn', $language->getId());
+        $this->assertEquals('', $language->getPart2b());
         $this->assertEquals('zho', $language->getPart2t());
         $this->assertEquals('zh', $language->getPart1());
         $this->assertEquals('Chinesisch/Mandarin', $language->getRefName());
 
         $language = Languages::getLanguage('wuu');
         $this->assertNotNull($language);
-        $this->assertEquals('wuu', $language->getPart2b());
+        $this->assertEquals('wuu', $language->getId());
+        $this->assertEquals('', $language->getPart2b());
         $this->assertEquals('zho', $language->getPart2t());
         $this->assertEquals('zh', $language->getPart1());
         $this->assertEquals('Chinesisch/Wu', $language->getRefName());
@@ -191,7 +193,7 @@ class LanguagesTest extends TestCase
     public function testAddLanguageExistingPart2b()
     {
         $languages = new Languages();
-        $languages->addLanguage('ger', 'deu', 'de', 'German');
+        $languages->addLanguage('deu', 'ger', 'deu', 'de', 'German');
 
         $german = Languages::getLanguage('ger');
 
@@ -205,11 +207,12 @@ class LanguagesTest extends TestCase
     public function testAddLanguageWithoutPart1()
     {
         $languages = new Languages();
-        $languages->addLanguage('zxx', 'zxx', null, 'Not specified');
+        $languages->addLanguage('zxx', 'zxx', 'zxx', null, 'Not specified');
 
         $lang = Languages::getLanguage('zxx');
 
         $this->assertNotNull($languages);
+        $this->assertEquals('zxx', $lang->getId());
         $this->assertEquals('zxx', $lang->getPart2b());
         $this->assertEquals('zxx', $lang->getPart2t());
         $this->assertEquals('', $lang->getPart1());
@@ -219,8 +222,8 @@ class LanguagesTest extends TestCase
     public function testAddLanguages()
     {
         $extra = [
-            'cmn' => 'zho, zh, Chinesisch/Mandarin',
-            'wuu' => 'zho, zh, Chinesisch/Wu',
+            'cmn' => ', zho, zh, Chinesisch/Mandarin',
+            'wuu' => ', zho, zh, Chinesisch/Wu',
         ];
 
         $languages = new Languages();
@@ -236,7 +239,7 @@ class LanguagesTest extends TestCase
     public function testAddLanguagesWithoutPart1()
     {
         $extra = [
-            'zxx' => 'zxx, , Not specified',
+            'zxx' => ',zxx, , Not specified',
         ];
 
         $languages = new Languages();
@@ -257,5 +260,14 @@ class LanguagesTest extends TestCase
 
         $this->expectException(I18nException::class);
         $languages->addLanguages($extra);
+    }
+
+    public function testGetLanguageSame()
+    {
+        $ron = Languages::getLanguage('ron');
+        $rum = Languages::getLanguage('rum');
+
+        $this->assertNotNull($ron);
+        $this->assertSame($ron, $rum);
     }
 }

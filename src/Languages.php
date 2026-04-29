@@ -32,6 +32,8 @@
 namespace Opus\I18n;
 
 use function array_column;
+use function array_combine;
+use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_search;
@@ -45,7 +47,7 @@ use function strtolower;
  */
 class Languages
 {
-    /** @var array ISO-639 language codes (part2_b, part2_t, part1, ref_name) */
+    /** @var array ISO-639 language code => [part2_b, part2_t, part1, ref_name] */
     private static array $languages = [
         'aar' => ['aar', 'aar', 'aa', 'Danakil-Sprache'],
         'abk' => ['abk', 'abk', 'ab', 'Abchasisch'],
@@ -59,7 +61,6 @@ class Languages
         'ain' => ['ain', 'ain', '', 'Ainu-Sprache'],
         'aka' => ['aka', 'aka', 'ak', 'Akan-Sprache'],
         'akk' => ['akk', 'akk', '', 'Akkadisch'],
-        'alb' => ['alb', 'sqi', 'sq', 'Albanisch'],
         'ale' => ['ale', 'ale', '', 'Aleutisch'],
         'alg' => ['alg', 'alg', '', 'Algonkin-Sprachen (Andere)'],
         'alt' => ['alt', 'alt', '', 'Altaisch'],
@@ -90,7 +91,6 @@ class Languages
         'bal' => ['bal', 'bal', '', 'Belutschisch'],
         'bam' => ['bam', 'bam', 'bm', 'Bambara-Sprache'],
         'ban' => ['ban', 'ban', '', 'Balinesisch'],
-        'baq' => ['baq', 'eus', 'eu', 'Baskisch'],
         'bas' => ['bas', 'bas', '', 'Basaa-Sprache'],
         'bat' => ['bat', 'bat', '', 'Baltische Sprachen (Andere)'],
         'bej' => ['bej', 'bej', '', 'Bedauye'],
@@ -112,7 +112,6 @@ class Languages
         'bua' => ['bua', 'bua', '', 'Burjatisch'],
         'bug' => ['bug', 'bug', '', 'Bugi-Sprache'],
         'bul' => ['bul', 'bul', 'bg', 'Bulgarisch'],
-        'bur' => ['bur', 'mya', 'my', 'Birmanisch'],
         'byn' => ['byn', 'byn', '', 'Bilin-Sprache'],
         'cad' => ['cad', 'cad', '', 'Caddo-Sprachen'],
         'cai' => ['cai', 'cai', '', 'Indianersprachen, Zentralamerika (Andere)'],
@@ -121,11 +120,11 @@ class Languages
         'cau' => ['cau', 'cau', '', 'Kaukasische Sprachen (Andere)'],
         'ceb' => ['ceb', 'ceb', '', 'Cebuano'],
         'cel' => ['cel', 'cel', '', 'Keltische Sprachen (Andere)'],
+        'ces' => ['cze', 'ces', 'cs', 'Tschechisch'],
         'cha' => ['cha', 'cha', 'ch', 'Chamorro-Sprache'],
         'chb' => ['chb', 'chb', '', 'Chibcha-Sprachen'],
         'che' => ['che', 'che', 'ce', 'Tschetschenisch'],
         'chg' => ['chg', 'chg', '', 'Tschagataisch'],
-        'chi' => ['chi', 'zho', 'zh', 'Chinesisch'],
         'chk' => ['chk', 'chk', '', 'Trukesisch'],
         'chm' => ['chm', 'chm', '', 'Tscheremissisch'],
         'chn' => ['chn', 'chn', '', 'Chinook-Jargon'],
@@ -148,13 +147,13 @@ class Languages
         'crp' => ['crp', 'crp', '', 'Kreolische Sprachen; Pidginsprachen (Andere)'],
         'csb' => ['csb', 'csb', '', 'Kaschubisch'],
         'cus' => ['cus', 'cus', '', 'Kuschitische Sprachen (Andere)'],
-        'cze' => ['cze', 'ces', 'cs', 'Tschechisch'],
         'dak' => ['dak', 'dak', '', 'Dakota-Sprache'],
         'dan' => ['dan', 'dan', 'da', 'Dänisch'],
         'dar' => ['dar', 'dar', '', 'Darginisch'],
         'day' => ['day', 'day', '', 'Dajakisch'],
         'del' => ['del', 'del', '', 'Delaware-Sprache'],
         'den' => ['den', 'den', '', 'Slave-Sprache'],
+        'deu' => ['ger', 'deu', 'de', 'German'],
         'dgr' => ['dgr', 'dgr', '', 'Tlicho-Sprache; Dogrib-Sprache'],
         'din' => ['din', 'din', '', 'Dinka-Sprache'],
         'div' => ['div', 'div', 'dv', 'Maledivisch'],
@@ -163,28 +162,30 @@ class Languages
         'dsb' => ['dsb', 'dsb', '', 'Niedersorbisch'],
         'dua' => ['dua', 'dua', '', 'Duala-Sprachen'],
         'dum' => ['dum', 'dum', '', 'Mittelniederländisch'],
-        'dut' => ['dut', 'nld', 'nl', 'Niederländisch'],
         'dyu' => ['dyu', 'dyu', '', 'Dyula-Sprache'],
         'dzo' => ['dzo', 'dzo', 'dz', 'Dzongkha'],
         'efi' => ['efi', 'efi', '', 'Efik'],
         'egy' => ['egy', 'egy', '', 'Ägyptisch'],
         'eka' => ['eka', 'eka', '', 'Ekajuk'],
+        'ell' => ['gre', 'ell', 'el', 'Neugriechisch'],
         'elx' => ['elx', 'elx', '', 'Elamisch'],
         'eng' => ['eng', 'eng', 'en', 'English'],
         'enm' => ['enm', 'enm', '', 'Mittelenglisch'],
         'epo' => ['epo', 'epo', 'eo', 'Esperanto'],
         'est' => ['est', 'est', 'et', 'Estnisch'],
+        'eus' => ['baq', 'eus', 'eu', 'Baskisch'],
         'ewe' => ['ewe', 'ewe', 'ee', 'Ewe-Sprache'],
         'ewo' => ['ewo', 'ewo', '', 'Ewondo'],
         'fan' => ['fan', 'fan', '', 'Pangwe-Sprache'],
         'fao' => ['fao', 'fao', 'fo', 'Färöisch'],
+        'fas' => ['per', 'fas', 'fa', 'Persisch'],
         'fat' => ['fat', 'fat', '', 'Fante-Sprache'],
         'fij' => ['fij', 'fij', 'fj', 'Fidschi-Sprache'],
         'fil' => ['fil', 'fil', '', 'Pilipino'],
         'fin' => ['fin', 'fin', 'fi', 'Finnisch'],
         'fiu' => ['fiu', 'fiu', '', 'Finnougrische Sprachen (Andere)'],
         'fon' => ['fon', 'fon', '', 'Fon-Sprache'],
-        'fre' => ['fre', 'fra', 'fr', 'French'],
+        'fra' => ['fre', 'fra', 'fr', 'French'],
         'frm' => ['frm', 'frm', '', 'Mittelfranzösisch'],
         'fro' => ['fro', 'fro', '', 'Altfranzösisch'],
         'frr' => ['frr', 'frr', '', 'Nordfriesisch'],
@@ -197,7 +198,6 @@ class Languages
         'gba' => ['gba', 'gba', '', 'Gbaya-Sprache'],
         'gem' => ['gem', 'gem', '', 'Germanische Sprachen (Andere)'],
         'geo' => ['geo', 'kat', 'ka', 'Georgisch'],
-        'ger' => ['ger', 'deu', 'de', 'German'],
         'gez' => ['gez', 'gez', '', 'Altäthiopisch'],
         'gil' => ['gil', 'gil', '', 'Gilbertesisch'],
         'gla' => ['gla', 'gla', 'gd', 'Gälisch-Schottisch'],
@@ -211,7 +211,6 @@ class Languages
         'got' => ['got', 'got', '', 'Gotisch'],
         'grb' => ['grb', 'grb', '', 'Grebo-Sprache'],
         'grc' => ['grc', 'grc', '', 'Altgriechisch'],
-        'gre' => ['gre', 'ell', 'el', 'Neugriechisch'],
         'grn' => ['grn', 'grn', 'gn', 'Guaraní-Sprache'],
         'gsw' => ['gsw', 'gsw', '', 'Schweizerdeutsch'],
         'guj' => ['guj', 'guj', 'gu', 'Gujarati-Sprache'],
@@ -234,7 +233,6 @@ class Languages
         'hup' => ['hup', 'hup', '', 'Hupa-Sprache'],
         'iba' => ['iba', 'iba', '', 'Iban-Sprache'],
         'ibo' => ['ibo', 'ibo', 'ig', 'Ibo-Sprache'],
-        'ice' => ['ice', 'isl', 'is', 'Isländisch'],
         'ido' => ['ido', 'ido', 'io', 'Ido'],
         'iii' => ['iii', 'iii', 'ii', 'Lalo-Sprache'],
         'ijo' => ['ijo', 'ijo', '', 'Ijo-Sprache'],
@@ -249,6 +247,7 @@ class Languages
         'ipk' => ['ipk', 'ipk', 'ik', 'Inupik'],
         'ira' => ['ira', 'ira', '', 'Iranische Sprachen (Andere)'],
         'iro' => ['iro', 'iro', '', 'Irokesische Sprachen'],
+        'isl' => ['ice', 'isl', 'is', 'Isländisch'],
         'ita' => ['ita', 'ita', 'it', 'Italian'],
         'jav' => ['jav', 'jav', 'jv', 'Javanisch'],
         'jbo' => ['jbo', 'jbo', '', 'Lojban'],
@@ -309,7 +308,6 @@ class Languages
         'lun' => ['lun', 'lun', '', 'Lunda-Sprache'],
         'luo' => ['luo', 'luo', '', 'Luo-Sprache'],
         'lus' => ['lus', 'lus', '', 'Lushai-Sprache'],
-        'mac' => ['mac', 'mkd', 'mk', 'Makedonisch'],
         'mad' => ['mad', 'mad', '', 'Maduresisch'],
         'mag' => ['mag', 'mag', '', 'Khotta'],
         'mah' => ['mah', 'mah', 'mh', 'Marschallesisch'],
@@ -329,6 +327,7 @@ class Languages
         'mic' => ['mic', 'mic', '', 'Micmac-Sprache'],
         'min' => ['min', 'min', '', 'Minangkabau-Sprache'],
         'mis' => ['mis', 'mis', '', 'Einzelne andere Sprachen'],
+        'mkd' => ['mac', 'mkd', 'mk', 'Makedonisch'],
         'mkh' => ['mkh', 'mkh', '', 'Mon-Khmer-Sprachen (Andere)'],
         'mlg' => ['mlg', 'mlg', 'mg', 'Malagassi-Sprache'],
         'mlt' => ['mlt', 'mlt', 'mt', 'Maltesisch'],
@@ -343,6 +342,7 @@ class Languages
         'mus' => ['mus', 'mus', '', 'Muskogisch'],
         'mwl' => ['mwl', 'mwl', '', 'Mirandesisch'],
         'mwr' => ['mwr', 'mwr', '', 'Marwari'],
+        'mya' => ['bur', 'mya', 'my', 'Birmanisch'],
         'myn' => ['myn', 'myn', '', 'Maya-Sprachen'],
         'myv' => ['myv', 'myv', '', 'Erza-Mordwinisch'],
         'nah' => ['nah', 'nah', '', 'Nahuatl'],
@@ -359,6 +359,7 @@ class Languages
         'nia' => ['nia', 'nia', '', 'Nias-Sprache'],
         'nic' => ['nic', 'nic', '', 'Nigerkordofanische Sprachen (Andere)'],
         'niu' => ['niu', 'niu', '', 'Niue-Sprache'],
+        'nld' => ['dut', 'nld', 'nl', 'Niederländisch'],
         'nno' => ['nno', 'nno', 'nn', 'Nynorsk'],
         'nob' => ['nob', 'nob', 'nb', 'Bokmål'],
         'nog' => ['nog', 'nog', '', 'Nogaisch'],
@@ -389,7 +390,6 @@ class Languages
         'pap' => ['pap', 'pap', '', 'Papiamento'],
         'pau' => ['pau', 'pau', '', 'Palau-Sprache'],
         'peo' => ['peo', 'peo', '', 'Altpersisch'],
-        'per' => ['per', 'fas', 'fa', 'Persisch'],
         'phi' => ['phi', 'phi', '', 'Philippinisch-Austronesisch (Andere)'],
         'phn' => ['phn', 'phn', '', 'Phönikisch'],
         'pli' => ['pli', 'pli', 'pi', 'Pali'],
@@ -406,7 +406,7 @@ class Languages
         'roa' => ['roa', 'roa', '', 'Romanische Sprachen (Andere)'],
         'roh' => ['roh', 'roh', 'rm', 'Rätoromanisch'],
         'rom' => ['rom', 'rom', '', 'Romani (Sprache)'],
-        'rum' => ['rum', 'ron', 'ro', 'Rumänisch'],
+        'ron' => ['rum', 'ron', 'ro', 'Rumänisch'],
         'run' => ['run', 'run', 'rn', 'Rundi-Sprache'],
         'rup' => ['rup', 'rup', '', 'Aromunisch'],
         'rus' => ['rus', 'rus', 'ru', 'Russian'],
@@ -431,7 +431,7 @@ class Languages
         'sio' => ['sio', 'sio', '', 'Sioux-Sprachen (Andere)'],
         'sit' => ['sit', 'sit', '', 'Sinotibetische Sprachen (Andere)'],
         'sla' => ['sla', 'sla', '', 'Slawische Sprachen (Andere)'],
-        'slo' => ['slo', 'slk', 'sk', 'Slowakisch'],
+        'slk' => ['slo', 'slk', 'sk', 'Slowakisch'],
         'slv' => ['slv', 'slv', 'sl', 'Slowenisch'],
         'sma' => ['sma', 'sma', '', 'Südsaamisch'],
         'sme' => ['sme', 'sme', 'se', 'Nordsaamisch'],
@@ -448,6 +448,7 @@ class Languages
         'son' => ['son', 'son', '', 'Songhai-Sprache'],
         'sot' => ['sot', 'sot', 'st', 'Süd-Sotho-Sprache'],
         'spa' => ['spa', 'spa', 'es', 'Spanish'],
+        'sqi' => ['alb', 'sqi', 'sq', 'Albanisch'],
         'srd' => ['srd', 'srd', 'sc', 'Sardisch'],
         'srn' => ['srn', 'srn', '', 'Sranantongo'],
         'srp' => ['srp', 'srp', 'sr', 'Serbisch '],
@@ -527,6 +528,7 @@ class Languages
         'zen' => ['zen', 'zen', '', 'Zenaga'],
         'zgh' => ['zgh', 'zgh', '', 'Marokkanisches Tamazight'],
         'zha' => ['zha', 'zha', 'za', 'Zhuang'],
+        'zho' => ['chi', 'zho', 'zh', 'Chinesisch'],
         'znd' => ['znd', 'znd', '', 'Zande-Sprachen'],
         'zul' => ['zul', 'zul', 'zu', 'Zulu-Sprache'],
         'zun' => ['zun', 'zun', '', 'Zuñi-Sprache'],
@@ -536,69 +538,89 @@ class Languages
 
     private static array $addedLanguages = [];
 
+    private static array $languageCache = [];
+
     public function getAllAsArray(): array
     {
         return self::$languages;
     }
 
-    public function addLanguage(string $part2b, string $part2t, ?string $part1, string $refName): self
+    public function addLanguage(string $id, ?string $part2b, ?string $part2t, ?string $part1, string $refName): self
     {
-        self::$addedLanguages[$part2b] = [$part2b, $part2t, $part1 ?? '', $refName];
+        self::$addedLanguages[$id] = [$part2b ?? '', $part2t ?? '', $part1 ?? '', $refName];
+
+        if (isset(self::$languageCache[$id])) {
+            unset(self::$languageCache[$id]);
+        }
 
         return $this;
     }
 
     public function addLanguages(array $languages): self
     {
-        foreach ($languages as $part2b => $language) {
+        foreach ($languages as $id => $language) {
             $values = array_map('trim', explode(',', $language));
-            if (count($values) !== 3) {
+            if (count($values) !== 4) {
                 throw new I18nException(
-                    "Language '{$part2b}' invalid config (required are \'part2t, part1, refName\')"
+                    "Language '{$id}' invalid config (required are \'part2b part2t, part1, refName\')"
                 );
             }
-            [$part2t, $part1, $refName] = $values;
-            $this->addLanguage($part2b, $part2t, $part1, $refName);
+            [$part2b, $part2t, $part1, $refName] = $values;
+            $this->addLanguage($id, $part2b, $part2t, $part1, $refName);
         }
         return $this;
     }
 
     public static function getLanguage(string $code): ?Language
     {
+        $code = strtolower($code);
+
         if (strlen($code) === 2) {
             return self::getLanguageByPart1($code);
         }
 
-        $language = self::getLanguageByPart2b($code);
+        $languages = self::getLanguageList();
 
-        if ($language !== null) {
+        if (isset($languages[$code])) {
+            return self::createLanguage($code, $languages[$code]);
+        }
+
+        $language = self::getLanguageByPart2t($code);
+
+        if (null !== $language) {
             return $language;
         }
 
-        return self::getLanguageByPart2t($code);
+        return self::getLanguageByPart2b($code);
     }
 
     public static function getLanguageByPart2b(string $code): ?Language
     {
         $languages = self::getLanguageList();
-        $language  = $languages[strtolower($code)] ?? null;
-        return $language !== null ? new Language($language) : null;
+        $prepared  = array_combine(array_keys($languages), array_column($languages, 0));
+        $index     = array_search(strtolower($code), $prepared);
+        return $index !== false ? self::createLanguage($index, $languages[$index]) : null;
     }
 
     public static function getLanguageByPart1(string $code): ?Language
     {
         $languages = self::getLanguageList();
-        $index     = array_search(strtolower($code), array_column($languages, 2, 0));
-        return $index !== false ? new Language($languages[$index]) : null;
+        $prepared  = array_combine(array_keys($languages), array_column($languages, 2));
+        $index     = array_search(strtolower($code), $prepared);
+        return $index !== false ? self::createLanguage($index, $languages[$index]) : null;
     }
 
     public static function getLanguageByPart2t(string $code): ?Language
     {
         $languages = self::getLanguageList();
-        $index     = array_search(strtolower($code), array_column($languages, 1, 0));
-        return $index !== false ? new Language($languages[$index]) : null;
+        $prepared  = array_combine(array_keys($languages), array_column($languages, 1));
+        $index     = array_search(strtolower($code), $prepared);
+        return $index !== false ? self::createLanguage($index, $languages[$index]) : null;
     }
 
+    /**
+     * TODO fallback if part1 does not exist?
+     */
     public static function getPart1(?string $code, ?string $default = null): ?string
     {
         if ($code === null) {
@@ -608,6 +630,9 @@ class Languages
         return $language !== null ? $language->getPart1() : $default;
     }
 
+    /**
+     * TODO fallback if part2_b does not exist?
+     */
     public static function getPart2b(?string $code, ?string $default = null): ?string
     {
         if ($code === null) {
@@ -617,6 +642,9 @@ class Languages
         return $language !== null ? $language->getPart2b() : $default;
     }
 
+    /**
+     * TODO fallback if part2_t does not exist?
+     */
     public static function getPart2t(?string $code, ?string $default = null): ?string
     {
         if ($code === null) {
@@ -629,5 +657,16 @@ class Languages
     protected static function getLanguageList(): array
     {
         return array_merge(self::$languages, self::$addedLanguages);
+    }
+
+    protected static function createLanguage(string $id, array $info): Language
+    {
+        if (! isset(self::$languageCache[$id])) {
+            $language                 = new Language($id, $info);
+            self::$languageCache[$id] = $language;
+            return $language;
+        }
+
+        return self::$languageCache[$id];
     }
 }

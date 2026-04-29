@@ -38,6 +38,9 @@ use Locale;
  */
 class Language
 {
+    /** @var string ISO 639 language code */
+    private $id;
+
     /** @var string */
     private $part2b;
 
@@ -50,12 +53,18 @@ class Language
     /** @var string */
     private $refName;
 
-    public function __construct(array $language)
+    public function __construct(string $id, array $language)
     {
+        $this->id      = $id;
         $this->part2b  = $language[0];
         $this->part2t  = $language[1];
         $this->part1   = $language[2];
         $this->refName = $language[3];
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
     }
 
     public function getPart2b(): string
@@ -80,9 +89,9 @@ class Language
 
     public function getDisplayName(?string $locale = null): string
     {
-        $name = Locale::getDisplayName($this->part2b, $locale);
+        $name = Locale::getDisplayName($this->id, $locale);
 
-        if ($name === $this->part2b) {
+        if ($name === $this->id) {
             $name = $this->refName;
         }
 
