@@ -39,7 +39,7 @@ class LanguageTest extends TestCase
 {
     public function testConstruct()
     {
-        $lang = new Language(['ger', 'deu', 'de', 'German']);
+        $lang = new Language('deu', ['ger', 'deu', 'de', 'German']);
 
         $this->assertEquals('ger', $lang->getPart2b());
         $this->assertEquals('deu', $lang->getPart2t());
@@ -49,7 +49,7 @@ class LanguageTest extends TestCase
 
     public function testGetDisplayName()
     {
-        $lang = new Language(['ger', 'deu', 'de', 'German']);
+        $lang = new Language('deu', ['ger', 'deu', 'de', 'German']);
 
         Locale::setDefault('en');
         $this->assertEquals('German', $lang->getDisplayName());
@@ -60,7 +60,7 @@ class LanguageTest extends TestCase
 
     public function testGetDisplayNameWithLocale()
     {
-        $lang = new Language(['ger', 'deu', 'de', 'German']);
+        $lang = new Language('deu', ['ger', 'deu', 'de', 'German']);
 
         $this->assertEquals('German', $lang->getDisplayName('en'));
         $this->assertEquals('Deutsch', $lang->getDisplayName('de'));
